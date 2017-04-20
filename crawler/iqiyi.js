@@ -6,7 +6,7 @@ var util = require('../Public/util')
 //     'http://www.iqiyi.com/v_19rraakn18.html',//歌手
 //     'http://www.iqiyi.com/v_19rraa904k.html',//奇葩大会
 //     'http://www.iqiyi.com/v_19rraaoqx0.html',//爱in思谈
-//     'http://www.iqiyi.com/v_19rrag3q2g.htmll',//饭饭男友
+//     'http://www.iqiyi.com/v_19rrag3q2g.html',//饭饭男友
 //     'http://www.iqiyi.com/v_19rrag35ec.html',//吃光全宇宙
 //     'http://www.iqiyi.com/v_19rrb49n7o.html',//跨界冰雪王
 //     'http://www.iqiyi.com/v_19rrb6lu48.html',//最强大脑
@@ -95,5 +95,17 @@ exports.getCountById = function (ids, callback){
                 count += counts[idx][id]
             })
             callback(count, counts.length);
+        })
+}
+
+exports.getSourceId = function (name, callback) {
+    var url = 'http://so.iqiyi.com/so/q_' + encodeURIComponent(name)
+
+    superagent
+        .get(url)
+        .end(function (err, res) {
+            var $ = cheerio.load(res.text)
+            var sourceId = $('.mod_result_list .list_item').attr('data-qipuid')
+            callback(sourceId)
         })
 }

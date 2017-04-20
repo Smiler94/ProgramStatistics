@@ -6,6 +6,7 @@ var ProgramSchema = new mongoose.Schema({
     url_tencent: String,
     channel: String,
     is_use: Number,
+    source_id: Number,
     meta: {
         createAt: {
             type: Date,
@@ -21,6 +22,7 @@ var ProgramSchema = new mongoose.Schema({
 ProgramSchema.pre('save', function (next) {
     if (this.isNew) {
         this.meta.createAt = this.meta.updateAt = Date.now()
+
     } else {
         this.meta.updateAt = Date.now()
     }

@@ -11,6 +11,7 @@ mongoose.connect('mongodb://localhost/program')
 
 
 var iqiyi = require('./crawler/iqiyi')
+var tencent = require('./crawler/tencent')
 app.set('views', './view/pages') // 设置模板目录
 app.set('view engine', 'jade') // 设置模板引擎
 
@@ -65,52 +66,65 @@ app.post('/program/update', function (req, res) {
             })
         })
     } else {
-        _program = new Program({
-            name: programObj.name,
-            channel: programObj.channel,
-            url_iqiyi: programObj.url_iqiyi,
-            url_tencent: programObj.url_tencent
-        })
-        _program.save(function(err, program) {
-            if (err) {
-                console.log(err)
-            }
-            res.redirect('/')
-        })
+        iqiyi.getSourceId(programObj.name, function (sourceId) {
+            _program = new Program({
+                name: programObj.name,
+                channel: programObj.channel,
+                url_iqiyi: programObj.url_iqiyi,
+                url_tencent: programObj.url_tencent,
+                source_id: sourceId
+            })
 
+            _program.save(function(err, program) {
+                if (err) {
+                    console.log(err)
+                }
+                res.redirect('/')
+            })
+        })
     }
 })
 
-app.post('/program/count', function (req, res) {
-    var ids = req.body._ids
-    console.log(ids)
-    return
+app.post('/program/count/iqiyi', function (req, res) {
+    var ids = req.body.ids
+    
     Program.find({_id: {"$in": ids}}, {}, function (err, programs) {
         var result = []
         programs.forEach(function (_program){
-            iqiyi.getSourceId(_program.url_iqiyi, function (souceId) {
-                iqiyi.getIds(souceId, function(ids) {
-                    iqiyi.getCountById(ids, function (count, times) {
-                        result.push({
-                            name: _program.name,
-                            channel: _program.channel,
-                            count: count,
-                            times: times
-                        })
-                        if (result.length == programs.length) {
-                            res.send(result)
-                        }
+            iqiyi.getIds(_program.source_id, function(ids) {
+                iqiyi.getCountById(ids, function (count, times) {
+                    result.push({
+                        name: _program.name,
+                        channel: _program.channel,
+                        count: count,
+                        times: times
                     })
+                    if (result.length == programs.length) {
+                        res.send(result)
+                    }
                 })
             })
         })
     })
 })
-// var souceId
-// iqiyi.getSourceId('http://www.iqiyi.com/v_19rraakn18.html', function (souceId) {
-//     iqiyi.getIds(souceId, function(ids) {
-//         iqiyi.getCountById(ids, function (counts) {
-//             console.log(counts)
-//         })
-//     })
-// })
+
+app.post('/program/count/tencent', function (req, res) {
+    var ids = req.body.ids
+    
+    Program.find({_id: {"$in": ids}}, {}, function (err, programs) {
+        var result = []
+        programs.forEach(function (_program){
+            tencent.getCountByUrl(_program.url_tencent, function (count, times) {
+                result.push({
+                    name: _program.name,
+                    channel: _program.channel,
+                    count: count,
+                    times: times
+                })
+                if (result.length == programs.length) {
+                    res.send(result)
+                }
+            })
+        })
+    })
+})

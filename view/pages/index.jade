@@ -4,58 +4,94 @@ block content
     div(class="container" style="height:100%")
         div(class="left",style="height:100%;width:20%") 
             ul
+                li
+                    input(type="checkbox" id="checkAll")
+                    label(style="margin-left:10px" for="checkAll") 全选
                 each item in programs
                     li 
                         if item.is_use == 1
-                            input(type="checkbox" value="#{item._id}" checked name="ids")
+                            input(type="checkbox" value="#{item._id}" name="ids" checked=true)
                         else
-                            input(type="checkbox" value="#{item._id}" name="ids")
-                        span(style="margin-left:10px") #{item.name}
+                            input(type="checkbox" value="#{item._id}" name="ids" checked=false)
+                        label(style="margin-left:10px" for="#{item._id}") #{item.name}
+            div
+                button(class="btn btn-primary",id="countBtn") 开始统计
                         
         
         div(class="left",style="height:100%;width:80%") 
             div
-                button(class="btn btn-primary",id="countBtn") 开始统计
-            div
-                table(class="table table-striped table-hover")
+                ul.nav.nav-tabs
+                    li(role="presentation" id="iqiyi" class="active") 
+                        a(href="#") 爱奇艺视频
+                    li(role="presentation" id="tencent") 
+                        a(href="#") 腾讯视频
+
+                table(class="table table-striped table-hover" class="data_table" id="table_iqiyi")
                     thead
                         tr
                             th 节目名称
                             th 播出频道
                             th 总播放量
                             th 播放期数
-                    tbody#count_data
+                    tbody#count_data_iqiyi
 
+                table(class="table table-striped table-hover" class="data_table" id="table_tencent" style="display:none")
+                    thead
+                        tr
+                            th 节目名称
+                            th 播出频道
+                            th 总播放量
+                            th 播放期数
+                    tbody#count_data_tencent
 
     script(type="text/javascript").
         $(document).ready(function () {
+            $('#checkAll').click(function() {
+                $('input[name="ids"]').attr('checked', this.checked)
+            })
+            $('li[role="presentation"]').click(function () {
+                var now = $(this).attr('id')
+                $('li[role="presentation"]').each(function () {
+                    if ($(this).attr('id') == now ) {
+                        $(this).addClass('active')
+                        $('#table_' + now).show()
+                    } else {
+                        $(this).removeClass('active')
+                        $('#table_' + $(this).attr('id')).hide()
+                    }
+                })
+            })
             $('#countBtn').click(function (e) {
                 var ids = []
                 $('input[name="ids"]:checked').each(function () {
                     ids.push($(this).val())
                 })
-                if (ids.length = 0) {
+                if (ids.length == 0) {
                     alert('请勾选节目')
                     return
                 }
-                $.ajax({
-                    url: '/program/count',
-                    data: {ids: ids},
-                    dataType: 'Json',
-                    type: 'post',
-                    success: function (result) {
-                        $('#count_data').html('')
-                        for(var i in result) {
-                            $('#count_data').append(
-                                $('<tr>').append(
-                                    $('<td>'+result[i].name+'</td>'),
-                                    $('<td>'+result[i].channel+'</td>'),
-                                    $('<td>'+result[i].count+'</td>'),
-                                    $('<td>'+result[i].times+'</td>')
-                                )
-                            )                            
+                var type = ['iqiyi', 'tencent']
+                type.forEach(function(t, idx) {
+                    $.ajax({
+                        url: '/program/count/' + t,
+                        data: {ids: ids},
+                        dataType: 'json',
+                        type: 'post',
+                        success: function (result) {
+                            console.log(t)
+                            $('#count_data_' + t).html('')
+                            for(var i in result) {
+                                $('#count_data_' + t).append(
+                                    $('<tr>').append(
+                                        $('<td>'+result[i].name+'</td>'),
+                                        $('<td>'+result[i].channel+'</td>'),
+                                        $('<td>'+result[i].count+'</td>'),
+                                        $('<td>'+result[i].times+'</td>')
+                                    )
+                                )                            
+                            }
                         }
-                    }
+                    })
                 })
             })
         })

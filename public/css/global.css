@@ -8,9 +8,15 @@
 
 li {
     list-style: none;
-    height:30px;
+    /*height:30px;*/
 }
 
 .table th,.table td {
     text-align: center
+}
+
+
+
+.data_table {
+    margin-top:30px;
 }
