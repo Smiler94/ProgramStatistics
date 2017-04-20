@@ -1,0 +1,19 @@
+{
+  "name": "program_statistics",
+  "version": "1.0.0",
+  "description": "for statistics of programs on iqiyi and tencent",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Smiler94/ProgramStatistics.git"
+  },
+  "author": "linzhen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Smiler94/ProgramStatistics/issues"
+  },
+  "homepage": "https://github.com/Smiler94/ProgramStatistics#readme"
+}

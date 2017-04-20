@@ -1,0 +1,16 @@
+.left {
+    float:left;
+}
+
+.right {
+    float:right;
+}
+
+li {
+    list-style: none;
+    height:30px;
+}
+
+.table th,.table td {
+    text-align: center
+}

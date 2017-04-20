@@ -1,0 +1,61 @@
+extends ../layout
+
+block content
+    div(class="container" style="height:100%")
+        div(class="left",style="height:100%;width:20%") 
+            ul
+                each item in programs
+                    li 
+                        if item.is_use == 1
+                            input(type="checkbox" value="#{item._id}" checked name="ids")
+                        else
+                            input(type="checkbox" value="#{item._id}" name="ids")
+                        span(style="margin-left:10px") #{item.name}
+                        
+        
+        div(class="left",style="height:100%;width:80%") 
+            div
+                button(class="btn btn-primary",id="countBtn") 开始统计
+            div
+                table(class="table table-striped table-hover")
+                    thead
+                        tr
+                            th 节目名称
+                            th 播出频道
+                            th 总播放量
+                            th 播放期数
+                    tbody#count_data
+
+
+    script(type="text/javascript").
+        $(document).ready(function () {
+            $('#countBtn').click(function (e) {
+                var ids = []
+                $('input[name="ids"]:checked').each(function () {
+                    ids.push($(this).val())
+                })
+                if (ids.length = 0) {
+                    alert('请勾选节目')
+                    return
+                }
+                $.ajax({
+                    url: '/program/count',
+                    data: {ids: ids},
+                    dataType: 'Json',
+                    type: 'post',
+                    success: function (result) {
+                        $('#count_data').html('')
+                        for(var i in result) {
+                            $('#count_data').append(
+                                $('<tr>').append(
+                                    $('<td>'+result[i].name+'</td>'),
+                                    $('<td>'+result[i].channel+'</td>'),
+                                    $('<td>'+result[i].count+'</td>'),
+                                    $('<td>'+result[i].times+'</td>')
+                                )
+                            )                            
+                        }
+                    }
+                })
+            })
+        })

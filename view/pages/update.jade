@@ -1,0 +1,26 @@
+extends ../layout
+
+block content
+    .container
+        .row
+            form.form-horizontal(method="post" action="/program/update")
+                input(type="hidden",value="#{program._id}",name="_id")
+                .form-group
+                    label.col-sm-4.control-label(for="inputName") 节目名称
+                    .col-sm-5
+                        input#inputName.form-control(type="text", name="name", value="#{program.name}")
+                .form-group
+                    label.col-sm-4.control-label(for="inputChannel") 播放频道
+                    .col-sm-5
+                        input#inputChannel.form-control(type="text", name="channel", value="#{program.channel}")
+                .form-group
+                    label.col-sm-4.control-label(for="inputUrlIqiyi") 爱奇艺链接
+                    .col-sm-5
+                        input#inputUrlIqiyi.form-control(type="text", name="url_iqiyi", value="#{program.url_iqiyi}")
+                .form-group
+                    label.col-sm-4.control-label(for="inputUrlTencent") 腾讯链接
+                    .col-sm-5
+                        input#inputUrlTencent.form-control(type="text", name="url_tencent", value="#{program.url_tencent}")
+                .form-group(style="text-align:center")
+                    .col-sm-offset-2.col-sm-10
+                    button.btn.btn-default(type="submit") 提交
