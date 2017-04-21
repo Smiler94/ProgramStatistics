@@ -5,7 +5,9 @@
 .right {
     float:right;
 }
-
+ul {
+    padding: 0;
+}
 li {
     list-style: none;
     /*height:30px;*/
@@ -14,7 +16,6 @@ li {
 .table th,.table td {
     text-align: center
 }
-
 
 
 .data_table {
